@@ -1,4 +1,3 @@
 libftTester
 *.o
-*.swap
-.gitignore
+*.swp
