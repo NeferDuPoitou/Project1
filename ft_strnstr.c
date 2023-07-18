@@ -6,7 +6,7 @@
 /*   By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/16 10:26:48 by Gecko             #+#    #+#             */
-/*   Updated: 2023/07/18 12:31:34 by Gecko            ###   ########.fr       */
+/*   Updated: 2023/07/18 18:14:06 by Gecko            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ char	*ft_strnstr(const char *big, const char *little, size_t len)
 
 	
 	i = 0;
-	len = -1;
 	if (little[0] == '\0')
 		return ((char*)big);
 	while (big[i] && i < len - 1)
