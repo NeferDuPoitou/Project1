@@ -6,7 +6,7 @@
 /*   By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/16 13:54:12 by Gecko             #+#    #+#             */
-/*   Updated: 2023/07/16 13:58:35 by Gecko            ###   ########.fr       */
+/*   Updated: 2023/07/20 21:02:16 by Gecko            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,5 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len);
 char	*ft_strrchr(const char *s, int c);
 int		ft_tolower(int c);
 int		ft_toupper(int c);
+char	*ft_itoa(int n);
 #endif
