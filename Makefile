@@ -6,7 +6,7 @@
 #    By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/16 10:39:52 by Gecko             #+#    #+#              #
-#    Updated: 2023/07/20 21:01:28 by Gecko            ###   ########.fr        #
+#    Updated: 2023/07/22 13:48:15 by Gecko            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,9 @@ SRC	=	ft_atoi.c		\
 		ft_strrchr.c	\
 		ft_tolower.c	\
 		ft_toupper.c	\
-		ft_itoa.c	
+		ft_itoa.c	\
+		ft_strjoin.c	\
+		ft_split.c
 
 OBJS = $(SRC:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/20 20:55:27 by Gecko             #+#    #+#             */
-/*   Updated: 2023/07/20 23:12:12 by Gecko            ###   ########.fr       */
+/*   Updated: 2023/07/20 23:44:28 by Gecko            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ char  	*ft_itoa(int n)
         long int        nb;
         char            *tab;
         int i;
-	size_t size;
+	int size;
 
         i = 0;
         nb = n;
