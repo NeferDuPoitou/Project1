@@ -1,36 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   ft_lstaddfront_bonus.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/16 10:25:49 by Gecko             #+#    #+#             */
-/*   Updated: 2023/07/24 18:35:57 by Gecko            ###   ########.fr       */
+/*   Created: 2023/08/06 17:49:25 by Gecko             #+#    #+#             */
+/*   Updated: 2023/08/06 17:55:25 by Gecko            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-int	ft_atoi(const char *nptr)
-{
-	int		neg;
-	long int	ret;
+#include "libft.h"
 
-	ret = 0,
-	neg = 1;
-	while ((*nptr >= 9 && *nptr <= 13) || *nptr == 32)
-		nptr++;
-	if (*nptr == '-' || *nptr == '+')
-	{
-		//if (*(nptr + 1) < '0' || *(nptr + 1) > '9')
-			//return (0);
-		if (*nptr == '-')
-			neg = -1;
-		nptr++;
-	}
-	while (*nptr >= '0' && *nptr <='9')
-	{
-		ret = (ret + (*nptr - '0')) * 10;
-		nptr++;
-	}
-	return (ret / 10 * neg);
+void    ft_lstadd_front(t_list **lst, t_list *new)
+{
+        if (lst && new)
+        {
+                new->next = *lst; // on bouge le pointeur lst (head)
+                *lst = new; // et on lui met de la data
+        }
 }
