@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "libft.h"
 
 char	*ft_strrchr(const char *s, int c)
@@ -21,11 +20,11 @@ char	*ft_strrchr(const char *s, int c)
 		c = c - 256;
 	size = ft_strlen(s);
 	if (c == 0)
-		return ((char*)s + size);
+		return ((char *)s + size);
 	while (size >= 0)
 	{
 		if (s[size] == c)
-			return ((char*)s + size);
+			return ((char *)s + size);
 		size--;
 	}
 	return (NULL);

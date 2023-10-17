@@ -12,40 +12,44 @@
 
 #include "libft.h"
 
-static size_t	calculate_SIZE_MAX() {
-	// Determine the size of size_t in bytes
-	size_t size_t_size = 0;
-	size_t temp = ~(size_t)0;
+static size_t	calculate_size_max(void)
+{
+	size_t	size_t_size;
+	size_t	size_max;
+	size_t	temp;
+	size_t	i;
 
-	while (temp != 0) 
+	size_t_size = 0;
+	temp = ~(size_t);
+	while (temp != 0)
 	{
 		temp >>= 8;
 		size_t_size++;
 	}
-	// Create the SIZE_MAX value without directly using SIZE_MAX or any other standard header
-	size_t size_max = 0;
-	for (size_t i = 0; i < size_t_size; i++) 
+	size_max = 0;
+	while (i < size_t_size)
 	{
 		size_max <<= 8;
 		size_max |= 0xFF;
+		i++;
 	}
-	return size_max;
+	return (size_max);
 }
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {
-	void	*p;
-        size_t	total_size;
-	size_t	size_max;
+	void		*p;
+	size_t		total_size;
+	size_t		size_max;
 
 	total_size = nmemb * size;
-	size_max = calculate_SIZE_MAX();
+	size_max = calculate_size_max();
 	if (size != 0)
 	{
 		if (nmemb > size_max / size)
 			return (NULL);
 	}
-	if ((nmemb == 0 && size != 0) || (nmemb == 0 && size == 0)\
+	if ((nmemb == 0 && size != 0) || (nmemb == 0 && size == 0) \
 	|| (nmemb != 0 && size == 0))
 	{
 		p = malloc(0);
@@ -59,4 +63,3 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	ft_bzero(p, total_size);
 	return (p);
 }
-

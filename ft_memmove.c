@@ -14,12 +14,13 @@
 
 void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	char *p_dest = dest;
-	const char *p_src = src;
-	char p_temp[n];
-	size_t i;
+	char		*p_dest;
+	const char	*p_src = src;
+	char		p_temp[n];
+	size_t		i;
 
 	i = 0;
+	p_dest = dest;
 	while (i < n)
 	{
 		p_temp[i] = p_src[i];
@@ -31,5 +32,5 @@ void	*ft_memmove(void *dest, const void *src, size_t n)
 		p_dest[i] = p_temp[i];
 		i++;
 	}
-	return dest;
+	return (dest);
 }
