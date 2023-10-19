@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strmapi.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+        */
+/*   By: achatzit <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/22 22:23:08 by Gecko             #+#    #+#             */
-/*   Updated: 2023/07/22 22:26:08 by Gecko            ###   ########.fr       */
+/*   Created: 2023/10/18 14:49:48 by achatzit          #+#    #+#             */
+/*   Updated: 2023/10/19 11:36:44 by achatzit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ char	*ft_strmapi(char const *s, char (*f)(unsigned int, char))
 	char	*tab;
 	int		i;
 
+	if (!s || !f)
+		return (NULL);
 	i = 0;
 	tab = ft_strdup(s);
 	if (!tab)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+        */
+/*   By: achatzit <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/22 13:47:05 by Gecko             #+#    #+#             */
-/*   Updated: 2023/07/22 13:49:29 by Gecko            ###   ########.fr       */
+/*   Created: 2023/10/18 14:48:30 by achatzit          #+#    #+#             */
+/*   Updated: 2023/10/19 11:36:13 by achatzit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,8 @@ char	**ft_split(char const *s, char c)
 	char	**splitted;
 	int		pp_size;
 
+	if (!s)
+		return (NULL);
 	pp_size = get_char_pointer_pointer_malloc_size(s, c);
 	splitted = malloc(pp_size * sizeof(char *));
 	split_motherfuckers(splitted, s, c);

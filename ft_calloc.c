@@ -3,38 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+        */
+/*   By: achatzit <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/16 09:58:58 by Gecko             #+#    #+#             */
-/*   Updated: 2023/07/20 18:53:50 by Gecko            ###   ########.fr       */
+/*   Created: 2023/10/18 14:40:33 by achatzit          #+#    #+#             */
+/*   Updated: 2023/10/19 09:43:17 by achatzit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
-
-static size_t	calculate_size_max(void)
-{
-	size_t	size_t_size;
-	size_t	size_max;
-	size_t	temp;
-	size_t	i;
-
-	size_t_size = 0;
-	temp = ~(size_t);
-	while (temp != 0)
-	{
-		temp >>= 8;
-		size_t_size++;
-	}
-	size_max = 0;
-	while (i < size_t_size)
-	{
-		size_max <<= 8;
-		size_max |= 0xFF;
-		i++;
-	}
-	return (size_max);
-}
 
 void	*ft_calloc(size_t nmemb, size_t size)
 {
@@ -42,13 +18,13 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	size_t		total_size;
 	size_t		size_max;
 
-	total_size = nmemb * size;
-	size_max = calculate_size_max();
+	size_max = (size_t)-1;
 	if (size != 0)
 	{
 		if (nmemb > size_max / size)
 			return (NULL);
 	}
+	total_size = nmemb * size;
 	if ((nmemb == 0 && size != 0) || (nmemb == 0 && size == 0) \
 	|| (nmemb != 0 && size == 0))
 	{

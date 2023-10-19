@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+        */
+/*   By: achatzit <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/16 10:31:39 by Gecko             #+#    #+#             */
-/*   Updated: 2023/07/18 10:58:42 by Gecko            ###   ########.fr       */
+/*   Created: 2023/10/18 14:47:12 by achatzit          #+#    #+#             */
+/*   Updated: 2023/10/18 14:47:14 by achatzit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,20 @@
 
 void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	char		*p_dest;
-	const char	*p_src = src;
-	char		p_temp[n];
-	size_t		i;
-
-	i = 0;
-	p_dest = dest;
-	while (i < n)
+	if (dest == src)
 	{
-		p_temp[i] = p_src[i];
-		i++;
+		return (dest);
 	}
-	i = 0;
-	while (i < n)
+	else if (dest < src)
 	{
-		p_dest[i] = p_temp[i];
-		i++;
+		ft_memcpy(dest, src, n);
+	}
+	else
+	{
+		while (n--)
+		{
+			((unsigned char *)dest)[n] = ((unsigned char *)src)[n];
+		}
 	}
 	return (dest);
 }

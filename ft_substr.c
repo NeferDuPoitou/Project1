@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_substr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+        */
+/*   By: achatzit <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/22 19:54:40 by Gecko             #+#    #+#             */
-/*   Updated: 2023/07/22 20:19:24 by Gecko            ###   ########.fr       */
+/*   Created: 2023/10/18 14:51:18 by achatzit          #+#    #+#             */
+/*   Updated: 2023/10/19 11:35:22 by achatzit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	size_t	malloc_size;
 	size_t	i;
 
+	if (!s)
+		return (NULL);
 	if (start > ft_strlen(s))
 		malloc_size = 1;
-	else if (!s)
-		return (NULL);
 	else if (len > ft_strlen(s) - start)
 		malloc_size = ft_strlen(s) - start + 1;
 	else

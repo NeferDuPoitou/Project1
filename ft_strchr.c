@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+        */
+/*   By: achatzit <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/16 10:18:20 by Gecko             #+#    #+#             */
-/*   Updated: 2023/07/18 11:20:50 by Gecko            ###   ########.fr       */
+/*   Created: 2023/10/18 14:48:40 by achatzit          #+#    #+#             */
+/*   Updated: 2023/10/18 14:48:42 by achatzit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ char	*ft_strchr(const char *s, int c)
 {
 	if (c > 256)
 		c = c - 256;
+	if (*s == 0 && c == 0)
+		return (char *)(s);
 	while (*s)
 	{
 		if (*s == c)

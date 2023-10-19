@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+        */
+/*   By: achatzit <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/21 09:30:54 by Gecko             #+#    #+#             */
-/*   Updated: 2023/07/22 13:57:13 by Gecko            ###   ########.fr       */
+/*   Created: 2023/10/18 14:49:09 by achatzit          #+#    #+#             */
+/*   Updated: 2023/10/19 11:35:47 by achatzit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	char	*tab;
 	size_t	total_size;
 
+	if (!s1 || !s2)
+		return (NULL);
 	total_size = ft_strlen(s1) + ft_strlen(s2) + 1;
 	tab = malloc((total_size) * sizeof(char));
 	if (!tab)
