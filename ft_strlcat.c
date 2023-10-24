@@ -27,13 +27,13 @@ size_t	ft_strlcat(char *dst, const char *src, size_t size)
 		return (src_len + size);
 	copy_len = size - dst_len - 1;
 	i = 0;
-	while (i < copy_len)
+	while (i < copy_len && (dst_len + i) < (size - 1))
 	{
 		dst[dst_len + i] = src[i];
 		if (src[i] == '\0')
 			break ;
 		i++;
 	}
-	dst[size - 1] = '\0';
+	dst[dst_len + i] = '\0';
 	return (total_len);
 }

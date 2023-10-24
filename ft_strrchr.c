@@ -16,14 +16,12 @@ char	*ft_strrchr(const char *s, int c)
 {
 	int	size;
 
-	if (c > 256)
-		c = c - 256;
 	size = ft_strlen(s);
-	if (c == 0)
+	if ((unsigned char)c == 0)
 		return ((char *)s + size);
 	while (size >= 0)
 	{
-		if (s[size] == c)
+		if (s[size] == (unsigned char)c)
 			return ((char *)s + size);
 		size--;
 	}

@@ -88,8 +88,8 @@ char	**ft_split(char const *s, char c)
 		return (NULL);
 	pp_size = get_char_pointer_pointer_malloc_size(s, c);
 	splitted = malloc(pp_size * sizeof(char *));
-	split_motherfuckers(splitted, s, c);
 	if (!splitted)
 		return (NULL);
+	split_motherfuckers(splitted, s, c);
 	return (splitted);
 }
