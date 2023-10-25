@@ -12,6 +12,20 @@
 
 #include "libft.h"
 
+static void	let_it_go(char **splitted)
+{
+	int	i;
+
+	i = 0;
+	while (splitted[i] != NULL)
+	{
+		free(splitted[i]);
+		splitted[i] = NULL;
+		i++;
+	}
+	free(splitted);
+}
+
 static int	get_char_pointer_pointer_malloc_size(char const *s, char c)
 {
 	int	i;
@@ -90,6 +104,10 @@ char	**ft_split(char const *s, char c)
 	splitted = malloc(pp_size * sizeof(char *));
 	if (!splitted)
 		return (NULL);
-	split_motherfuckers(splitted, s, c);
+	if (!split_motherfuckers(splitted, s, c))
+	{
+		let_it_go(splitted);
+		return (NULL);
+	}
 	return (splitted);
 }
