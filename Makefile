@@ -1,6 +1,6 @@
 # **************************************************************************** #
 #                                                                              #
-#                                                         :::      ::::::::    #
+
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: Gecko <Gecko@chezmoi.fr>                   +#+  +:+       +#+         #
@@ -12,57 +12,65 @@
 
 NAME = libft.a
 
-SRC	=	ft_atoi.c		\
-		ft_bzero.c		\
-		ft_calloc.c		\
-		ft_isalnum.c	\
-		ft_isalpha.c	\
-		ft_isascii.c	\
-		ft_isdigit.c	\
-		ft_isprint.c	\
-		ft_itoa.c		\
-		ft_memchr.c		\
-		ft_memcmp.c		\
-		ft_memcpy.c		\
-		ft_memmove.c	\
-		ft_memset.c		\
-		ft_putchar_fd.c	\
-		ft_putendl_fd.c	\
-		ft_putnbr_fd.c	\
-		ft_putstr_fd.c	\
-		ft_split.c		\
-		ft_strchr.c		\
-		ft_strdup.c		\
-		ft_striteri.c	\
-		ft_strjoin.c	\
-		ft_strlcat.c 	\
-		ft_strlcpy.c	\
-		ft_strlen.c 	\
-		ft_strmapi.c	\
-		ft_strncmp.c	\
-		ft_strnstr.c	\
-		ft_strrchr.c	\
-		ft_strtrim.c	\
-		ft_substr.c		\
-		ft_tolower.c	\
-		ft_toupper.c	\
+SRC	=	string/ft_atoi.c		\
+		string/ft_bzero.c		\
+		string/ft_isalnum.c	\
+		string/ft_isalpha.c	\
+		string/ft_isascii.c	\
+		string/ft_isdigit.c	\
+		string/ft_isprint.c	\
+		string/ft_itoa.c		\
+		string/ft_split.c		\
+		string/ft_split_charset.c		\
+		string/ft_strchr.c		\
+		string/ft_strdup.c		\
+		string/ft_striteri.c	\
+		string/ft_strjoin.c	\
+		string/ft_strlcat.c 	\
+		string/ft_strlcpy.c	\
+		string/ft_strcpy.c	\
+		string/ft_strlen.c 	\
+		string/ft_strmapi.c	\
+		string/ft_strncmp.c	\
+		string/ft_strnstr.c	\
+		string/ft_strrchr.c	\
+		string/ft_strtrim.c	\
+		string/ft_substr.c		\
+		string/ft_tolower.c	\
+		string/ft_toupper.c	\
+		string/ft_strcmp.c		\
+		string/ft_tabtablen.c		\
+		string/ft_tabtabheigth.c		\
+		string/ft_affix.c		\
+		string/ft_strtolower.c \
+		string/ft_sorttabtab.c \
+		string/ft_strstr.c \
+		string/ft_strncat.c \
+		string/ft_isblank.c \
+		mem/ft_calloc.c		\
+		mem/ft_realloc.c		\
+		mem/ft_memchr.c		\
+		mem/ft_memcmp.c		\
+		mem/ft_memcpy.c		\
+		mem/ft_memmove.c	\
+		mem/ft_memset.c		\
+		io/ft_putchar_fd.c	\
+		io/ft_putendl_fd.c	\
+		io/ft_putnbr_fd.c	\
+		io/ft_putstr_fd.c	\
+		math/ft_abs.c \
+		allocator/allocator.c		\
+		allocator/allocator_warpers.c \
+		allocator/mlist_utils.c		\
+		allocator/mlist_utils2.c		\
+		get_next_line/get_next_line.c \
+		containers/ft_lst.c \
+		containers/ft_stack.c
 
 OBJS = $(SRC:.c=.o)
 
-BONUS =	ft_lstadd_back_bonus.c	\
-		ft_lstadd_front_bonus.c	\
-		ft_lstclear_bonus.c		\
-		ft_lstdelone_bonus.c	\
-		ft_lstiter_bonus.c		\
-		ft_lstlast_bonus.c		\
-		ft_lstmap_bonus.c		\
-		ft_lstnew_bonus.c		\
-		ft_lstsize_bonus.c		\
-
-BONUS_OBJS = $(BONUS:.c=.o)
-
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -g3
 RM = rm -rf
 AR = ar crs
 
@@ -75,14 +83,11 @@ $(NAME): $(OBJS)
 all: $(NAME)
 
 clean:
-	$(RM) $(OBJS) $(BONUS_OBJS)
+	$(RM) $(OBJS)
 
 fclean:	clean
-	$(RM) $(NAME)		
+	$(RM) $(NAME)
 
 re:	fclean all
 
-bonus: $(OBJS) $(BONUS_OBJS)
-	$(AR) $(NAME) $(OBJS)  $(BONUS_OBJS)
-
-.PHONY:	all clean fclean re bonus
+.PHONY:	all clean fclean re

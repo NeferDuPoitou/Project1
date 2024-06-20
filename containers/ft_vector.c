@@ -1,0 +1,610 @@
+#include "../libft.h"
+#include <stdio.h>
+#include <errno.h>
+#include <stdlib.h>
+
+t_vector	*vector_init(size_t initial_capacity, \
+					  int alloc_lvl, \
+					  void (*delfun)(void *), \
+					  void *(*dupfun)(void *))
+{
+	t_vector *v;
+
+	if (initial_capacity <= 0)
+		return (errno = EINVAL, NULL);
+	v = walloc(sizeof(t_vector), alloc_lvl);
+	if (!v)
+		return (errno = ENOMEM, NULL);
+	v->alloc_lvl = alloc_lvl;
+	v->data = walloc(initial_capacity * sizeof(void *), alloc_lvl);
+	if (!v->data)
+		return (errno = ENOMEM, wfree(v), NULL);
+	v->size = 0;
+	v->capacity = initial_capacity;
+	v->delfun = delfun;
+	v->dupfun = dupfun;
+	return (v);
+}
+
+void	vector_resize(t_vector *v, size_t new_capacity)
+{
+	void	**new_data;
+
+	if (!v || new_capacity <= 0)
+	{
+		errno = EINVAL;
+		return ;
+	}
+	new_data = walloc(new_capacity * sizeof(void *), v->alloc_lvl);
+	if (!new_data)
+	{
+		errno = ENOMEM;
+		return ;
+	}
+	ft_memcpy(new_data, v->data, v->size * sizeof(void *));
+	wfree(v->data);
+	v->data = new_data;
+	v->capacity = new_capacity;
+}
+
+void	vector_add(t_vector *v, void *elem)
+{
+	if (!v || !elem)
+	{
+		errno = EINVAL;
+		return ;
+	}
+	if (v->size == v->capacity)
+		vector_resize(v, v->capacity * 2);
+	if (errno == ENOMEM)
+		return ;
+	v->data[v->size++] = elem;
+}
+
+void	*vector_get(t_vector *v, size_t index)
+{
+	if (!v || index >= v->size)
+		return (errno = EINVAL, NULL);
+	return (v->data[index]);
+}
+
+static void shift_right(t_vector *v, size_t n, size_t t)
+{
+	if (n == 0 || t > v->size)
+		return;
+	while (v->size + n > v->capacity)
+		vector_resize(v, v->capacity * 2);
+	ft_memmove(&v->data[t + n], &v->data[t], (v->size - t) * sizeof(void *));
+	v->size += n;
+}
+
+static void	shift_left(t_vector *v, size_t n, size_t t)
+{
+	if (t - n < 0)
+	{
+		errno = EINVAL;
+		return ;
+	}
+	ft_memmove(&v->data[t - n], &v->data[t], (v->size - t) * sizeof(void *));
+	v->size -= n;
+}
+
+// Inserts an element at a specified index, shifting subsequent elements.
+void vector_insert(t_vector *v, void *elem, size_t index)
+{
+	if (!v || !elem || index > v->size)
+	{
+		errno = EINVAL;
+		return;
+	}
+	shift_right(v, 1, index);
+	v->data[index] = elem;
+}
+
+// Removes an element at a specified index, shifting subsequent elements.
+void	vector_remove(t_vector *v, size_t index)
+{
+	if (!v || index > v->size)
+	{
+		errno = EINVAL;
+		return ;
+	}
+	if (v->delfun)
+		v->delfun(v->data[index]);
+	shift_left(v, 1, index + 1);
+}
+
+// Removes and returns the last element of the vector.
+// returns NULL if v is empty.
+void	*vector_pop(t_vector *v)
+{
+	if (v->size <= 0)
+		return (errno = EINVAL, NULL);
+	return (v->data[v->size-- - 1]);
+}
+
+// Removes all elements from the vector.
+void	vector_clear(t_vector *v)
+{
+	while (v->size)
+	{
+		if (v->delfun)
+			v->delfun(v->data[v->size - 1]);
+		wfree(v->data[v->size-- - 1]);
+	}
+}
+
+// Checks if the vector is empty.
+int		vector_isempty(t_vector *v)
+{
+	return (v->size);
+}
+
+// Ensures the vector has a least the specified capacity without resizing.
+int		vector_reserve(t_vector *v, size_t new_capacity)
+{
+	return (new_capacity <= v->capacity);
+}
+
+// Reduces the vector's capacity to fit its size.
+void	vector_shrink_to_fit(t_vector *v)
+{
+	void	**newdata;
+
+	if (v->size == v->capacity)
+		return ;
+	newdata = walloc(v->size * sizeof(void *), v->alloc_lvl);
+	if (!newdata)
+	{
+		errno = ENOMEM;
+		return ;
+	}
+	ft_memmove(newdata, v->data, v->size * sizeof(void **));
+	wfree(v->data);
+	v->capacity = v->size;
+	v->data = newdata;
+}
+
+// Finds the index of the first occurence of an element.
+size_t	vector_find(t_vector *v, void *elem)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < v->size)
+	{
+		if (!ft_memcmp(v->data[i], elem, 1))
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+
+static void swap(void **a, void **b)
+{
+    void *temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+static int partition(void **data, int low, int high, int (*cmp)(const void *, const void *))
+{
+    void *pivot = data[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++)
+	{
+        if (cmp(data[j], pivot) < 0)
+		{
+            i++;
+            swap(&data[i], &data[j]);
+        }
+    }
+    swap(&data[i + 1], &data[high]);
+    return i + 1;
+}
+
+static void	quicksort(void **data, int low, int high, int (*cmp)(const void *, const void *))
+{
+    if (low < high)
+	{
+        int pi = partition(data, low, high, cmp);
+        quicksort(data, low, pi - 1, cmp);
+        quicksort(data, pi + 1, high, cmp);
+    }
+}
+
+// vector_sort function definition
+void	vector_sort(t_vector *v, int (*cmp)(const void *, const void *)) {
+    if (!v || !cmp)
+	{
+        errno = EINVAL;
+        return;
+    }
+    quicksort(v->data, 0, v->size - 1, cmp);
+}
+
+// Reverses the order of elements in the vector.
+void	vector_reverse(t_vector *v)
+{
+	size_t	i;
+	void	*tmp;
+
+	i = 0;
+	while (i < v->size / 2)
+	{
+		tmp = v->data[i];
+		v->data[i] = v->data[v->size - 1 - i];
+		v->data[v->size - 1 - i] = tmp;
+		i++;
+	}
+}
+
+//Creates a deep copy of the vector.
+t_vector	*vector_dup(t_vector *v, int alloc_lvl)
+{
+	t_vector	*dupped;
+	size_t		i;
+
+
+	dupped = vector_init(v->capacity, alloc_lvl, v->delfun, v->dupfun);
+	i = 0;
+	while (i < v->size)
+	{
+		if (dupped->dupfun)
+			dupped->data[i] = dupped->dupfun(v->data[i]);
+		else
+			dupped->data[i] = v->data[i];
+		i++;
+	}
+	dupped->size = v->size;
+	return (dupped);
+}
+
+void	vector_iter(t_vector *v, void (*f)(void *));
+//   Applies a function to each element and returns a new vector.
+t_vector	*vector_map(t_vector *v, void (*f)(void *), int alloc_lvl)
+{
+	t_vector	*new;
+
+	new = vector_dup(v, alloc_lvl);
+	vector_iter(new, f);
+	return (new);
+}
+
+// Filters elements based on a predicate function, returning a new
+// vector containg the elements where cond is true.
+t_vector	*vector_filter(t_vector *v, int (*cond)(void *), int alloc_lvl)
+{
+	t_vector	*new;
+	size_t		i;
+
+	new = vector_init(v->capacity, alloc_lvl, v->delfun, v->dupfun);
+	i = 0;
+	while (i < v->size)
+	{
+		if (cond(v->data[i]))
+			vector_add(new, v->data[i]);
+		i++;
+	}
+	return (new);
+}
+
+// Merges two vectors into a new vector.
+// Deep copy
+t_vector	*vector_merge(t_vector *v1, t_vector *v2, int alloc_lvl)
+{
+	t_vector	*new;
+	size_t		i;
+
+	new = vector_init(v1->capacity + v2->capacity, alloc_lvl, v1->delfun, v1->dupfun);
+	i = 0;
+	while (i < v1->size)
+		vector_add(new, v1->dupfun(v1->data[i++]));
+	i = 0;
+	while (i < v2->size)
+		vector_add(new, v2->dupfun(v2->data[i++]));
+	return (new);
+}
+
+//Splits the vector into two at the specified index.
+//Deep copy, deallocate memory in v.
+t_vector	*vector_split(t_vector *v, size_t index, int alloc_lvl)
+{
+	t_vector	*new;
+	size_t		i;
+
+	new = vector_init(v->capacity, alloc_lvl, v->delfun, v->dupfun);
+	i = index;
+	while (i < v->size)
+		vector_add(new, v->dupfun(v->data[i++]));
+	i = v->size - 1;
+	while (i > index)
+	{
+		v->delfun(v->data[i]);
+		wfree(v->data[i--]);
+	}
+	v->size = index;
+	return (new);
+}
+
+//Swaps the elements at two specified indices.
+void	vector_swap(t_vector *v, size_t index1, size_t index2)
+{
+	void	*tmp;
+
+	if (index1 >= v->size || index2 >= v->size)
+	{
+		errno = EINVAL;
+		return ;
+	}
+	tmp = v->data[index1];
+	v->data[index1] = v->data[index2];
+	v->data[index2] = tmp;
+}
+
+//Finds the first element satisfying a predicate.
+void	*vector_find_if(t_vector *v, int (*pred)(void *))
+{
+	size_t	i;
+
+	i = 0;
+	while (i < v->size)
+	{
+		if (pred(v->data[i]))
+			return (v->data[i]);
+		i++;
+	}
+	return (NULL);
+}
+
+//Checks if the vector contains the specified element.
+int	vector_contains(t_vector *v, void *elem)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < v->size)
+	{
+		if (!ft_memcmp(v->data[i], elem, 1))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+//Adds an element to the beginning of the vector.
+void	vector_push_front(t_vector *v, void *elem)
+{
+	shift_right(v, 1, 0);
+	v->data[0] = elem;
+}
+
+//Removes and returns the first element of the vector.
+void	*vector_pop_front(t_vector *v)
+{
+	void	*elem;
+
+	elem = v->data[0];
+	shift_left(v, 1, 1);
+	return (elem);
+}
+
+// Returns a new vector containing a subrange of elements.
+// deep copy
+t_vector	*vector_slice(t_vector *v, size_t start, size_t end, int alloc_lvl)
+{
+	t_vector	*new;
+
+	new = vector_init(end - start + 1, alloc_lvl, v->delfun, v->dupfun);
+	while (start <= end)
+		vector_add(new, v->dupfun(v->data[start++]));
+
+	return (new);
+}
+
+// Copies vector elements to a pre-allocated array.
+// deep copy
+void	vector_copy_to_array(t_vector *v, void **array)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < v->size)
+	{
+		array[i] = v->dupfun(v->data[i]);
+		i++;
+	}
+}
+// Returns the current capacity of the vector.
+size_t	vector_capacity(t_vector *v)
+{
+	return (v->capacity);
+}
+
+// Applies a function to each element along with its index.
+void	vector_foreach(t_vector *v, void (*f)(void *, size_t));
+
+//Sets the element at the specified index.
+void	vector_set(t_vector *v, size_t index, void *elem)
+{
+	if (v->delfun)
+		v->delfun(v->data[index]);
+	v->data[index] = elem;
+}
+
+// Sorts a specific range within the vector using a comparison function.
+void	vector_sort_range(t_vector *v, size_t start, size_t end, int (*cmp)(const void *, const void *));
+
+void	vector_iter(t_vector *v, void (*f)(void *))
+{
+	size_t	i;
+
+	i = 0;
+	while (i < v->size)
+		f(v->data[i++]);
+}
+
+void	vector_free(t_vector **v)
+{
+	if ((*v)->delfun)
+		vector_iter(*v, (*v)->delfun);
+	wfree((*v)->data);
+	wfree(*v);
+	*v = NULL;
+}
+
+// #ifdef VECTORTEST
+
+// testing area
+
+#include <stdio.h>
+
+// function pointers
+
+static void	printchar(void *d)
+{
+	printf("%c\n", *(char *)d);
+}
+
+static void	printfloat(void *d)
+{
+	printf("%f\n", *(float *)d);
+}
+
+static void	printint(void *d)
+{
+	printf("%d\n", *(int *)d);
+}
+
+static void	print_vector_vars(t_vector *v)
+{
+	printf("|size: %ld| |capacity: %ld|\n", v->size, v->capacity);
+}
+
+typedef struct t
+{
+	char *l;
+	char *ll;
+}	type;
+
+static type	*newt()
+{
+	type	*t;
+
+	t = walloc(sizeof(type), SAFE);
+	t->l = walloc(10, SAFE);
+	t->ll = walloc(100, SAFE);
+	return t;
+}
+
+static void	delt(void *v)
+{
+	type	*t = (type *)v;
+	wfree(t->l);
+	wfree(t->ll);
+	wfree(t);
+}
+
+static void	plusplus(void *v)
+{
+	int	*n = (int *)v;
+	*n += 1;
+}
+
+void	*dupf(void *v)
+{
+	int *n = walloc(sizeof(int), SAFE);
+	*n = *(int *)v;
+	return (n);
+}
+
+int	is_even(void *c)
+{
+	return (*(int*)c % 2 == 0);
+}
+
+int compare_ints(const void *a, const void *b)
+{
+    int int_a = *(int*)a;
+    int int_b = *(int*)b;
+
+    if (int_a < int_b) return -1;
+    else if (int_a > int_b) return 1;
+    else return 0;
+}
+
+int main()
+{
+	{
+		t_vector	*v = vector_init(2, SAFE, &wfree, dupf);
+		int	tab[10] = {5, 0, -1234, 666, 0, 3, 1234987, -124, -2};
+		int	*t = walloc(10 * sizeof(int), SAFE);
+		ft_memcpy(t, tab, 9 * sizeof(int));
+		for (int i = 0; i < 9; i++)
+			vector_add(v, &t[i]);
+		vector_iter(v, printint);
+
+		vector_sort(v, &compare_ints);
+		printf("\n");
+		vector_iter(v, printint);
+
+		vector_free(&v);
+		wfree(t);
+	}
+	#ifdef COPYTOARRAY
+	{
+		t_vector	*v = vector_init(2, SAFE, &wfree, dupf);
+		int	tab[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+		int	*t = walloc(10 * sizeof(int), SAFE);
+		ft_memcpy(t, tab, 9 * sizeof(int));
+		for (int i = 0; i < 9; i++)
+			vector_add(v, &t[i]);
+		vector_iter(v, printint);
+		int	**array = walloc(v->size * sizeof(int *), SAFE);
+		vector_copy_to_array(v, (void **)array);
+		printf("\n");
+		for (size_t i = 0; i < v->size; i++)
+			printf("%d\n", *(int *)array[i]);
+		for (size_t i = 0; i < v->size; i++)
+			wfree(array[i]);
+		wfree(array);
+		vector_free(&v);
+		wfree(t);
+	}
+	#endif
+	#ifdef VECTORSET
+	{
+		t_vector	*v = vector_init(2, SAFE, &wfree, dupf);
+		int	tab[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+		int	*t = walloc(10 * sizeof(int), SAFE);
+		ft_memcpy(t, tab, 9 * sizeof(int));
+		for (int i = 0; i < 9; i++)
+			vector_add(v, &t[i]);
+		vector_iter(v, printint);
+		int n = 666;
+		vector_set(v, 3, &n);
+		printf("\n");
+		vector_iter(v, printint);
+		vector_free(&v);
+	}
+	#endif
+	{
+
+	}
+}
+
+// #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
