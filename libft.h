@@ -458,6 +458,31 @@ void	vector_iter(t_vector *v, void (*f)(void *));
 //
 void	vector_free(t_vector **v);
 
+
+/*   STRING    */
+
+typedef struct s_string
+{
+	char	*data;
+	char	*cstr;
+	size_t	len;
+	size_t	capacity;
+	int		alloc_lvl;
+}	t_string;
+
+
+t_string	*string_init(char *init, int alloc_lvl);
+void		add_capacity(t_string *s);
+size_t		string_append(t_string *s, t_string *to_append);
+size_t		string_prepend(t_string *s, t_string *to_prepend);
+void		string_appendfmt(t_string *s, const char *fmt, ...);
+void		string_append_cstr(t_string *s, const char *cstr);
+void		string_prepend_cstr(t_string *s, const char *cstr);
+char		*string_cstr(t_string *s, int alloc_lvl);;
+t_string	*string_substr(t_string *s, size_t start, size_t len, int alloc_lvl);
+int			string_cmp(t_string *s1, t_string *s2);
+void		string_free(t_string **s);
+
 #endif  // LIBFT_H
 
 

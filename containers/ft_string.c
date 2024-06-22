@@ -1,14 +1,4 @@
 #include "../libft.h"
-#include <signal.h>
-
-typedef struct s_string
-{
-	char	*data;
-	char	*cstr;
-	size_t	len;
-	size_t	capacity;
-	int		alloc_lvl;
-}	t_string;
 
 t_string	*string_init(char *init, int alloc_lvl)
 {
@@ -79,9 +69,6 @@ size_t	string_prepend(t_string *s, t_string *to_prepend)
 }
 
 #include <stdarg.h>
-#include <stdio.h>
-void	string_append_cstr(t_string *s, const char *cstr);
-
 void	string_appendfmt(t_string *s, const char *fmt, ...)
 {
 	va_list	arg;
@@ -143,8 +130,6 @@ void	string_prepend_cstr(t_string *s, const char *cstr)
 		cstr++;
 	}
 }
-
-char	*string_cstr(t_string *s, int alloc_lvl);
 
 t_string	*string_substr(t_string *s, size_t start, size_t len, int alloc_lvl)
 {
