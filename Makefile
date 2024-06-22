@@ -65,6 +65,8 @@ SRC	=	string/ft_atoi.c		\
 		allocator/mlist_utils2.c		\
 		get_next_line/get_next_line.c \
 		containers/ft_lst.c \
+		containers/ft_vector.c \
+		containers/ft_string.c \
 		containers/ft_stack.c
 
 OBJS = $(SRC:.c=.o)

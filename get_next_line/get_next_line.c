@@ -23,16 +23,16 @@ static char	*ft_strjoin_s1_on_the_heap(char *s1, char *s2)
 	if (!s1 || !s2)
 		return (NULL);
 	total_size = ft_strlen(s1) + ft_strlen(s2) + 1;
-	tab = malloc((total_size) * sizeof(char));
+	tab = walloc((total_size) * sizeof(char), SAFE);
 	if (!tab)
 	{
-		free(s1);
+		wfree(s1);
 		return (NULL);
 	}
 	tab[0] = '\0';
 	ft_strlcat(tab, s1, total_size);
 	ft_strlcat(tab, s2, total_size);
-	free(s1);
+	wfree(s1);
 	return (tab);
 }
 
@@ -72,12 +72,12 @@ static char	*get_line_and_clean_remains(char **remains)
 		newline_pos++;
 	line = ft_substr(*remains, 0, newline_pos, SAFE);
 	clean_remains = ft_substr(*remains, newline_pos, remains_len - newline_pos, SAFE);
-	free(*remains);
+	wfree(*remains);
 	*remains = clean_remains;
 	if (!line || !clean_remains || ft_strlen(line) == 0)
 	{
-		free(*remains);
-		free(line);
+		wfree(*remains);
+		wfree(line);
 		*remains = NULL;
 		return (NULL);
 	}
@@ -96,7 +96,7 @@ static char	*read_from_fd(int fd, char **remains, char *tmp, ssize_t *read_len)
 		*read_len = read(fd, tmp, BUFFER_SIZE);
 		if (*read_len == -1)
 		{
-			free(remains[fd]);
+			wfree(remains[fd]);
 			remains[fd] = NULL;
 			return (NULL);
 		}

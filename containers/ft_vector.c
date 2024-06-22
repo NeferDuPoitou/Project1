@@ -80,7 +80,7 @@ static void shift_right(t_vector *v, size_t n, size_t t)
 
 static void	shift_left(t_vector *v, size_t n, size_t t)
 {
-	if (t - n < 0)
+	if ((int)t - (int)n < 0)
 	{
 		errno = EINVAL;
 		return ;
@@ -454,7 +454,7 @@ void	vector_free(t_vector **v)
 	*v = NULL;
 }
 
-// #ifdef VECTORTEST
+#ifdef VECTORTEST
 
 // testing area
 
@@ -594,7 +594,7 @@ int main()
 	}
 }
 
-// #endif
+#endif
 
 
 
