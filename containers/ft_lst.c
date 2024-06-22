@@ -342,25 +342,27 @@ void	lst_do_while(t_lst *l, int (*cond)(t_lnode *), void (*f)(t_lnode *))
 	}
 }
 
-void	lstclear(t_lst *l)
+void	lstclear(t_lst **l)
 {
 	t_lnode	*tmp;
 
-	if (!l)
+	if (!*l)
 	{
 		errno = EINVAL;
 		return ;
 	}
-	while (l->head)
+	while ((*l)->head)
 	{
-		tmp = l->head->next;
-		l->delf(l->head->content);
-		wfree(l->head);
-		l->head = tmp;
+		tmp = (*l)->head->next;
+		(*l)->delf((*l)->head->content);
+		wfree((*l)->head);
+		(*l)->head = tmp;
 	}
-	l->head = NULL;
-	l->tail = NULL;
-	l->size = 0;
+	(*l)->head = NULL;
+	(*l)->tail = NULL;
+	(*l)->size = 0;
+	wfree(*l);
+	*l = NULL;
 }
 
 void	lstiter(t_lst *l, void (*f)(t_lnode *))

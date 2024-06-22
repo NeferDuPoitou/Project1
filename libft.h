@@ -279,7 +279,7 @@ void	lst_do_while(t_lst *l, int (*cond)(t_lnode *), void (*f)(t_lnode *));
 // does not free l.
 // uses del to deallocate memory inside content.
 // returns early and sets errno to EINVAL if l is NULL.
-void	lstclear(t_lst *l);
+void	lstclear(t_lst **l);
 
 // applies the function f to each element of l in order.
 // returns early and sets errno to EINVAL if l or f are NULL,
