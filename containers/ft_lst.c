@@ -2,7 +2,7 @@
 #include <errno.h>
 
 
-t_lst	*newlst(int is_critical)
+t_lst	*newlst(int is_critical, void (*delf)(void *c), void *(*dupf)(t_lnode *))
 {
 	t_lst	*new;
 
@@ -13,6 +13,8 @@ t_lst	*newlst(int is_critical)
 	new->tail = NULL;
 	new->size = 0;
 	new->alloc_level = is_critical;
+	new->delf = delf;
+	new->dupf = dupf;
 	return (new);
 }
 
@@ -102,7 +104,7 @@ void	lstadd_before(t_lst *l, t_lnode *t, t_lnode *new)
 	l->size++;
 }
 
-void	lst_replace(t_lst *l, t_lnode *t, t_lnode *new, void (*del)(void *c))
+void	lst_replace(t_lst *l, t_lnode *t, t_lnode *new)
 {
 	if (!l || !t || !new || !l->size)
 	{
@@ -126,7 +128,7 @@ void	lst_replace(t_lst *l, t_lnode *t, t_lnode *new, void (*del)(void *c))
 		t->prev->next = new;
 		t->next->prev = new;
 	}
-	del(t->content);
+	l->delf(t->content);
 	wfree(t);
 }
 
@@ -225,21 +227,21 @@ t_lnode	*lst_dupnode(t_lnode *node, void *(*dupf)(t_lnode *))
 	return (new);
 }
 
-t_lst	*lst_dupn(t_lst *l, t_lnode *t, int n, void *(*dupf)(t_lnode *))
+t_lst	*lst_dupn(t_lst *l, t_lnode *t, int n)
 {
 	t_lst	*newl;
 	t_lnode	*new_node;
 
-	if (!l || !t || !dupf || !l->size || n < 0)
+	if (!l || !t || !l->size || n < 0)
 		return (errno = EINVAL, NULL);
 	if (!n)
 		n = l->size;
-	newl = newlst(l->alloc_level);
+	newl = newlst(l->alloc_level, l->delf, l->dupf);
 	if (!newl)
 		return (errno = ENOMEM, NULL);
 	while (n-- && t)
 	{
-		new_node = lstnew(dupf(t), t->alloc_level);
+		new_node = lstnew(l->dupf(t), t->alloc_level);
 		if (!new_node && errno == ENOMEM)
 			return (errno = ENOMEM, NULL);
 		lstadd_back(newl, new_node);
@@ -248,19 +250,19 @@ t_lst	*lst_dupn(t_lst *l, t_lnode *t, int n, void *(*dupf)(t_lnode *))
 	return (newl);
 }
 
-t_lst	*lst_dup(t_lst *l, void *(dupf)(t_lnode *))
+t_lst	*lst_dup(t_lst *l)
 {
 	t_lst	*newl;
 
-	if (!l || !dupf || !l->size)
+	if (!l || !l->size)
 		return (errno = EINVAL, NULL);
-	newl = lst_dupn(l, l->head, 0, dupf);
+	newl = lst_dupn(l, l->head, 0);
 	if (!newl && errno == ENOMEM)
 		return (errno = ENOMEM, NULL);
 	return (newl);
 }
 
-void	lst_delone(t_lst *l, t_lnode *d, void (*del)(void *c))
+void	lst_delone(t_lst *l, t_lnode *d)
 {
 	if (!l || !d || l->size == 0)
 		return;
@@ -280,12 +282,12 @@ void	lst_delone(t_lst *l, t_lnode *d, void (*del)(void *c))
 	}
 	else
 		d->next->prev = d->prev;
-	del(d->content);
+	l->delf(d->content);
 	wfree(d);
 	l->size--;
 }
 
-void	lst_remove_if(t_lst *l, int (*cond)(t_lnode *), void (*del)(void *c))
+void	lst_remove_if(t_lst *l, int (*cond)(t_lnode *))
 {
 	t_lnode	*i;
 	t_lnode	*temp;
@@ -300,7 +302,7 @@ void	lst_remove_if(t_lst *l, int (*cond)(t_lnode *), void (*del)(void *c))
 	{
 		temp = i->next;
 		if (cond(i))
-			lst_delone(l, i, del);
+			lst_delone(l, i);
 		i = temp;
 	}
 }
@@ -340,7 +342,7 @@ void	lst_do_while(t_lst *l, int (*cond)(t_lnode *), void (*f)(t_lnode *))
 	}
 }
 
-void	lstclear(t_lst *l, void (*del)(void *c))
+void	lstclear(t_lst *l)
 {
 	t_lnode	*tmp;
 
@@ -352,7 +354,7 @@ void	lstclear(t_lst *l, void (*del)(void *c))
 	while (l->head)
 	{
 		tmp = l->head->next;
-		del(l->head->content);
+		l->delf(l->head->content);
 		wfree(l->head);
 		l->head = tmp;
 	}
@@ -395,13 +397,13 @@ void	lstiter_reverse(t_lst *l, void (*f)(t_lnode *))
 	}
 }
 
-t_lst	*lstmap(t_lst *l, void (*f)(t_lnode *), void* (*dupf)(t_lnode *))
+t_lst	*lstmap(t_lst *l, void (*f)(t_lnode *))
 {
 	t_lst	*newl;
 
-	if (!l || !f || !dupf || !l->size)
+	if (!l || !f || !l->size)
 		return (errno = EINVAL, NULL);
-	newl = lst_dup(l, dupf);
+	newl = lst_dup(l);
 	if (!newl && errno == ENOMEM)
 		return (errno = ENOMEM, NULL);
 	lstiter(newl, f);
@@ -431,10 +433,7 @@ void	lst_reverse(t_lst *l)
 	}
 }
 
-t_lst	*lst_split_at_deep(t_lst *l, \
-							t_lnode *t, \
-							void *(*dupf)(t_lnode *), \
-							void (*del)(void *c))
+t_lst	*lst_split_at_deep(t_lst *l, t_lnode *t)
 {
 	t_lst	*newl;
 	t_lnode	*tmp;
@@ -444,13 +443,13 @@ t_lst	*lst_split_at_deep(t_lst *l, \
 	l->tail = t->prev;
 	t->prev->next = NULL;
 	t->prev = NULL;
-	newl = lst_dupn(l, t, 0, dupf);
+	newl = lst_dupn(l, t, 0);
 	if (!newl && errno == ENOMEM)
 		return (errno = ENOMEM, NULL);
 	while (t)
 	{
 		tmp = t->next;
-		del(t->content);
+		l->delf(t->content);
 		wfree(t);
 		t = tmp;
 	}
@@ -464,7 +463,7 @@ t_lst	*lst_split_at_shallow(t_lst *l, t_lnode *t)
 
 	if (!l || !t || t == l->head || t == l->tail || !l->size)
 		return (errno = EINVAL, NULL);
-	newl = newlst(l->alloc_level);
+	newl = newlst(l->alloc_level, l->delf, l->dupf);
 	newl->tail = l->tail;
 	newl->head = t;
 	l->tail = t->prev;
@@ -557,7 +556,7 @@ static void	del(void *c)
 
 int main(void)
 {
-	t_lst *l = newlst(SAFE);
+	t_lst *l = newlst(SAFE, &del, &copy_str);
 	for (int i = 0; i < 10; i++)
 	{
 		t_lnode *n = lstnew(ft_itoa(i, SAFE), SAFE);
@@ -576,8 +575,8 @@ int main(void)
 		(char *)l2->head->content, (char *)l2->tail->content);
 	printf("1 size: %ld 2 size: %ld\n", l->size, l2->size);
 
-	lstclear(l, &del);
-	lstclear(l2, &del);
+	lstclear(l);
+	lstclear(l2);
 	wfree(l);
 	wfree(l2);
 	// wclear(1);

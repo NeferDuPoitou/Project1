@@ -151,17 +151,22 @@ typedef struct s_lnode
 	int				alloc_level;
 }	t_lnode;
 
+typedef void (*t_delf)(void *);
+typedef void *(*t_dupf)(t_lnode *);
+
 typedef	struct s_lst
 {
 	t_lnode	*head;
 	t_lnode	*tail;
 	size_t	size;
 	int		alloc_level;
+	t_delf	delf;
+	t_dupf	dupf;
 }	t_lst;
 
 // allocates, initializes and return a new lst struct.
 // returns NULL and sets errno to ENOMEM if an allocation fails.
-t_lst	*newlst(int is_critical);
+t_lst	*newlst(int is_critical, t_delf, t_dupf);
 
 // allocates, initializes with content and return a new lst node.
 // returns NULL and sets errno to EINVAL if content is NULL.
@@ -194,10 +199,10 @@ void	lstadd_before(t_lst *l, t_lnode *t, t_lnode *new);
 // to keep the function O(1), it does not check if t is part of l.
 // use with that in mind.
 // does nothing in empty lists.
-// uses del to deallocate memory inside content.
+// uses delf to deallocate memory inside content.
 // returns early and sets errno to EINVAL if l, t or new are NULL,
 // or if l is an empty list.
-void	lst_replace(t_lst *l, t_lnode *t, t_lnode *new, void (*del)(void *c));
+void	lst_replace(t_lst *l, t_lnode *t, t_lnode *new);
 
 // merges the list new in front of the list l.
 // does nothing if new is empty.
@@ -240,25 +245,23 @@ t_lnode	*lst_dupnode(t_lnode *node, void *(*dupf)(t_lnode *));
 // Uses the function dupf to perform the copy of content.
 // Copies the allocation level of l.
 // if n is 0 or greater than the size of l, the list is dupped until the end.
-// Returns NULL and sets errno to EINVAL if l, dupf or t is NULL, or if n is 0.
+// Returns NULL and sets errno to EINVAL if l or t is NULL, or if n is 0.
 // Returns NULL and sets errno to ENOMEM if an allocation fails.
-t_lst	*lst_dupn(t_lst *l, t_lnode *t, int n, void *(*dupf)(t_lnode *));
+t_lst	*lst_dupn(t_lst *l, t_lnode *t, int n);
 
-// allocated and returns a copy of l, using dupf to perform the copy of content.
+// allocated and returns a copy of l
 // Returns NULL and sets errno to EINVAL if l or dupf are NULL.
 // Returns NULL and sets errno to ENOMEM if an allocation fails.
-t_lst	*lst_dup(t_lst *l, void *(dupf)(t_lnode *));
+t_lst	*lst_dup(t_lst *l);
 
 // deletes the node d from the list l, updating the links and the size.
 // returns early and sets errno to EINVAL if l or d are NULL or if l is
 // an empty list.
-// uses del to deallocate memory inside content.
-void	lst_delone(t_lst *l, t_lnode *d, void (*del)(void *c));
+void	lst_delone(t_lst *l, t_lnode *d);
 
 // iterates of the list l, and removes every node where
 // cond returns a non 0 number.
-// uses del to deallocate memory inside content.
-void	lst_remove_if(t_lst *l, int (*cond)(t_lnode *), void (*del)(void *c));
+void	lst_remove_if(t_lst *l, int (*cond)(t_lnode *));
 
 // iterates of the list l and applies f if cond returns a non 0 value.
 // returns early and sets errno to EINVAL if l, cond or f are NULL,
@@ -276,7 +279,7 @@ void	lst_do_while(t_lst *l, int (*cond)(t_lnode *), void (*f)(t_lnode *));
 // does not free l.
 // uses del to deallocate memory inside content.
 // returns early and sets errno to EINVAL if l is NULL.
-void	lstclear(t_lst *l, void (*del)(void *c));
+void	lstclear(t_lst *l);
 
 // applies the function f to each element of l in order.
 // returns early and sets errno to EINVAL if l or f are NULL,
@@ -293,7 +296,7 @@ void	lstiter_reverse(t_lst *l, void (*f)(t_lnode *));
 // returns NULL and sets errno to EINVAL if l, f or dupf are NULL, of if
 // l is an empty list.
 // returns NULL and sets errno to ENOMEM if an allocation fails.
-t_lst	*lstmap(t_lst *l, void (*f)(t_lnode *), void* (*dupf)(t_lnode *));
+t_lst	*lstmap(t_lst *l, void (*f)(t_lnode *));
 
 // reverses the list l.
 // returs early and sets errno to EINVAL if l or f are NULL,
@@ -308,10 +311,7 @@ void	lst_reverse(t_lst *l);
 // returns NULL and sets errno to EINVAL if l, or t are NULL,
 // if l is empty or if t is l's head or tail.
 // returns NULL and sets errno to ENOMEM if an allocation fails.
-t_lst	*lst_split_at_deep(t_lst *l, \
-							t_lnode *t, \
-							void *(*dupf)(t_lnode *), \
-							void (*del)(void *content));
+t_lst	*lst_split_at_deep(t_lst *l, t_lnode *t);
 
 // allocates and returns a new lst starting at t.
 // the original lst ends one before t.

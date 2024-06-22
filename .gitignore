@@ -1,3 +1,5 @@
 libftTester
 *.o
 *.swp
+a.out
+libft.a
