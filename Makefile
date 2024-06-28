@@ -77,18 +77,21 @@ RM = rm -rf
 AR = ar crs
 
 $(NAME): $(OBJS)
-	$(AR) $@ $^
+	@$(AR) $@ $^
 
 %.o: %.c
-	$(CC) $(CFLAGS) -c $^ -o $@
+	@printf "\033[93mCompiling $<"
+	@printf "\033[0m\r"
+	@$(CC) $(CFLAGS) -c $^ -o $@
+	@printf "\033[K"
 
 all: $(NAME)
 
 clean:
-	$(RM) $(OBJS)
+	@$(RM) $(OBJS)
 
 fclean:	clean
-	$(RM) $(NAME)
+	@$(RM) $(NAME)
 
 re:	fclean all
 
