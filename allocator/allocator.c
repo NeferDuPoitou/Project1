@@ -49,12 +49,18 @@ void	*allocator_alloc_new(t_mlist **allocs, int size, int is_critical)
 
 	newptr = malloc(size);
 	if (!newptr)
-		return (NULL);
+	{
+		ft_putstr_fd("Malloc fail mlistnew\n", 2);
+		wclear(1);
+		exit(1);
+	}
 	newnode = mlistnew(newptr, is_critical);
 	if (!newnode)
 	{
+		ft_putstr_fd("Malloc fail mlistnew\n", 2);
 		free(newptr);
-		return (NULL);
+		wclear(1);
+		exit(1);
 	}
 	mlistadd_back(allocs, newnode);
 	return (newptr);

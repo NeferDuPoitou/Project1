@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../libft.h"
+#include <stdio.h>
 
 t_mlist	*mlistnew(void *content, int is_critical)
 {
@@ -18,7 +19,12 @@ t_mlist	*mlistnew(void *content, int is_critical)
 
 	node = malloc(1 * sizeof(t_mlist));
 	if (!node)
-		return (NULL);
+	{
+		free(content);
+		ft_putstr_fd("Malloc fail mlistnew\n", 2);
+		wclear(1);
+		exit(1);
+	}
 	node->c = content;
 	node->critical = is_critical;
 	node->next = NULL;
