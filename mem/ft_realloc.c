@@ -1,5 +1,6 @@
 #include "../libft.h"
 #include <errno.h>
+#include <stdio.h>
 
 void	*ft_realloc(void *ptr, size_t old_size, size_t new_size, int alloc_lvl)
 {
@@ -16,28 +17,3 @@ void	*ft_realloc(void *ptr, size_t old_size, size_t new_size, int alloc_lvl)
 	wfree(ptr);
 	return (newptr);
 }
-
-#ifdef REALLOCTEST
-
-#include <stdio.h>
-
-int main()
-{
-	char *lol = malloc(10);
-	ft_strcpy(lol, "hahahaha");
-	printf("%s\n", lol);
-	lol = ft_realloc(lol, 10, 20);
-	ft_strcpy(lol, "hahahahahahahahaha");
-	printf("%s\n", lol);
-	free(lol);
-}
-
-#endif
-
-
-
-
-
-
-
-

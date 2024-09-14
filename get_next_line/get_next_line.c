@@ -71,7 +71,8 @@ static char	*get_line_and_clean_remains(char **remains)
 	if ((*remains)[newline_pos] == '\n')
 		newline_pos++;
 	line = ft_substr(*remains, 0, newline_pos, SAFE);
-	clean_remains = ft_substr(*remains, newline_pos, remains_len - newline_pos, SAFE);
+	clean_remains = ft_substr(*remains, newline_pos, \
+						remains_len - newline_pos, SAFE);
 	wfree(*remains);
 	*remains = clean_remains;
 	if (!line || !clean_remains || ft_strlen(line) == 0)
